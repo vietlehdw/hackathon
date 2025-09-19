@@ -85,7 +85,12 @@ export function ChatRoomView({ roomId }: { roomId: string }) {
           <button className="text-xs text-neutral-500 hover:underline" onClick={() => void loadMore()}>Load older messages</button>
         )}
         {messages.map((m) => (
-          <MessageItem key={m.id} msg={m} isOwn={m.senderId === user?.uid} />
+          <MessageItem key={m.id} msg={m} isOwn={m.senderId === user?.uid} sender={{
+            uid: m.senderId,
+            displayName: usersMap[m.senderId]?.displayName,
+            username: usersMap[m.senderId]?.username,
+            photoURL: usersMap[m.senderId]?.photoURL ?? null,
+          }} />
         ))}
       </div>
 

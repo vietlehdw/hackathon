@@ -43,8 +43,23 @@ async function ensureUserDoc(u: User): Promise<void> {
       providerData: u.providerData.map((p) => ({ providerId: p.providerId, uid: p.uid })),
     }, { merge: true })
   } else {
-    // touch updatedAt on login
-    await setDoc(ref, { updatedAt: serverTimestamp() }, { merge: true })
+    // Ensure required fields exist without overriding user choices
+    const data = snap.data() as any
+    const updates: Record<string, unknown> = {}
+    if (data.uid !== u.uid) updates.uid = u.uid
+    if (!('email' in data)) updates.email = u.email ?? null
+    if (!('displayName' in data)) updates.displayName = u.displayName ?? ''
+    if (!('username' in data)) updates.username = ''
+    if (!('photoURL' in data)) updates.photoURL = u.photoURL ?? null
+    if (!('bio' in data)) updates.bio = ''
+    if (!('createdAt' in data)) updates.createdAt = serverTimestamp()
+    updates.updatedAt = serverTimestamp()
+    if (Object.keys(updates).length > 0) {
+      await setDoc(ref, updates, { merge: true })
+    } else {
+      // touch updatedAt on login
+      await setDoc(ref, { updatedAt: serverTimestamp() }, { merge: true })
+    }
   }
 }
 

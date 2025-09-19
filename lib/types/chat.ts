@@ -47,7 +47,11 @@ export type Message = {
 
 export type UserProfile = {
   uid: string
+  email: string | null
   displayName: string
-  username?: string
-  photoURL?: string | null
+  username: string // unique, lowercase
+  photoURL: string | null
+  bio: string
+  createdAt: TimestampLike
+  updatedAt: TimestampLike
 }
