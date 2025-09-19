@@ -1,0 +1,40 @@
+---
+globs: *.ts,*.tsx
+---
+
+# TypeScript & Code Quality Standards
+
+## TypeScript Configuration
+- Use TypeScript throughout the project
+- Follow the configuration in [tsconfig.json](mdc:tsconfig.json)
+- Target ES2017 with strict mode enabled
+- Use `@/*` path mapping for imports
+
+## Code Quality Rules
+- **Type Definitions**: Always prefer `type` over `interface`
+- **File Size**: Keep all files under 250 lines of code
+- **Comments**: Don't generate comments in source code by default unless explicitly requested
+- **Imports**: Use absolute imports with `@/*` when possible
+- **Error Handling**: Implement proper error boundaries and error states
+- **Performance**: Use React 19 features appropriately (concurrent features, transitions)
+
+## Best Practices
+- Use modern React patterns (hooks, functional components)
+- Implement proper loading and error states
+- Follow Next.js 15 App Router conventions
+- Use server components where appropriate
+- Implement proper TypeScript types for all props and function parameters
+- Use proper async/await patterns for Firebase operations
+
+## Code Organization
+- Keep components small and focused
+- Separate business logic from UI components
+- Use custom hooks for reusable logic
+- Implement proper prop validation with TypeScript
+- Follow the single responsibility principle
+
+## Firebase Integration Types
+Define proper types for Firebase data models as shown in feature specs:
+- User profiles, rooms, messages, presence data
+- Use Firestore Timestamp types appropriately
+- Implement proper error handling for Firebase operations

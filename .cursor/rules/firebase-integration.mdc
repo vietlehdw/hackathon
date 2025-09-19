@@ -1,0 +1,53 @@
+---
+description: Firebase integration patterns and best practices
+---
+
+# Firebase Integration Guide
+
+## Firebase Services Used
+- **Authentication**: Email/password + Google SSO
+- **Firestore**: Persistent data (users, rooms, messages, membership)
+- **Realtime Database**: Presence and typing indicators (fast connect/disconnect)
+- **Cloud Storage**: Image uploads with thumbnails
+- **Cloud Functions**: Optional admin and privileged operations
+- **Firebase Cloud Messaging (FCM)**: Push notifications
+
+## Data Models
+Follow the data models defined in feature specifications:
+
+### Core Collections
+- `users/{uid}`: User profiles and metadata
+- `rooms/{roomId}`: Direct messages and group chat rooms
+- `roomMembers/{roomId}/{uid}`: Membership and roles
+- `messages/{messageId}`: Text and image messages
+- `notificationTokens/{uid}`: FCM device tokens
+
+### Realtime Database Structure
+- `presence/{uid}`: Online/away status with onDisconnect cleanup
+- `typing/{roomId}/{uid}`: Typing indicators with TTL
+
+## Security Rules
+- Enforce `request.auth != null` for all authenticated operations
+- Room members can only read/write messages in their rooms
+- Users can only modify their own profile data
+- Image uploads restricted to room members
+
+## Integration Patterns
+- Use Firebase v9+ modular SDK
+- Initialize Firebase client in `lib/` directory
+- Use `onAuthStateChanged` for auth state management
+- Implement proper error handling for all Firebase operations
+- Use Firestore real-time listeners for live data
+- Implement proper cleanup of listeners and subscriptions
+
+## Performance Considerations
+- Use composite indexes for message queries: `(roomId asc, createdAt desc)`
+- Implement pagination for message lists
+- Use Firestore offline persistence where appropriate
+- Optimize image uploads with compression and thumbnails
+- Use batch writes for related operations
+
+## Environment Configuration
+- Store Firebase config in environment variables
+- Use `NEXT_PUBLIC_FIREBASE_VAPID_KEY` for FCM
+- Keep sensitive keys server-side only

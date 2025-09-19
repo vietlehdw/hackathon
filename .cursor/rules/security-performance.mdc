@@ -1,0 +1,70 @@
+---
+description: Security and performance best practices for the chat application
+---
+
+# Security & Performance Best Practices
+
+## Security Guidelines
+
+### Authentication & Authorization
+- Use Firebase Auth for all authentication flows
+- Implement proper route guards and middleware
+- Verify Firebase ID tokens for sensitive operations
+- Use Firestore security rules to enforce data access
+- Never trust client-side data validation alone
+
+### Data Protection
+- Sanitize user inputs to prevent XSS attacks
+- Use HTTPS for all communications
+- Store sensitive data server-side only
+- Implement rate limiting for API endpoints
+- Use Firebase App Check for additional protection (future)
+
+### Privacy Considerations
+- Users can only access their own profile data
+- Room members can only see messages in their rooms
+- Implement proper data deletion for user privacy
+- Handle image uploads with proper access controls
+
+## Performance Optimization
+
+### Database Performance
+- Use composite indexes for complex queries
+- Implement pagination for message lists (20-50 messages per page)
+- Use Firestore offline persistence for better UX
+- Batch related operations to reduce read/write costs
+- Clean up unused listeners and subscriptions
+
+### Real-time Performance
+- Use Realtime Database for ephemeral data (presence, typing)
+- Implement proper onDisconnect cleanup
+- Throttle typing indicators to avoid excessive updates
+- Use efficient data structures for real-time features
+
+### Frontend Performance
+- Use React 19 concurrent features for better UX
+- Implement proper loading states and skeletons
+- Use Next.js Image component for optimized images
+- Implement virtual scrolling for long message lists
+- Use proper caching strategies
+
+### Image Handling
+- Compress images before upload (max 2MB)
+- Generate thumbnails for image messages
+- Use appropriate image formats (WebP when supported)
+- Implement lazy loading for image galleries
+- Cache images appropriately
+
+## Monitoring & Error Handling
+- Implement comprehensive error boundaries
+- Log errors appropriately (avoid logging sensitive data)
+- Use proper error messages for user feedback
+- Monitor Firebase usage and costs
+- Implement proper retry logic for failed operations
+
+## Scalability Considerations
+- Design for horizontal scaling from the start
+- Use efficient data models to minimize reads/writes
+- Implement proper connection pooling
+- Consider CDN for static assets
+- Plan for Firebase quotas and limits

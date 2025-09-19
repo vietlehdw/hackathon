@@ -1,0 +1,23 @@
+# AGENTS — Hackathon Chat App
+
+- Commands (pnpm): dev `pnpm dev --turbopack`, build `pnpm build --turbopack`, start `pnpm start`; typecheck `pnpm tsc --noEmit`. No lint/test scripts configured yet.
+- Tests: none set up. If Vitest is added later: run a single test with `pnpm vitest -t "name" path/to/file.test.ts`.
+- Stack: Next.js 15 App Router (React 19), Tailwind CSS 4, shadcn/ui, Lucide; backend via Firebase (Auth, Firestore, Realtime DB, Storage, Cloud Functions, FCM).
+- Structure: `app/` routes/layouts (server components by default), `lib/` utilities, `public/` assets, `docs/` PRD/specs, `.cursor/rules/` assistant rules.
+- Key configs: `next.config.ts`, `tsconfig.json` (strict, `@/*` paths), `postcss.config.mjs`, `components.json` (shadcn/ui aliases), `.env.example` (Firebase client/admin envs).
+- Internal APIs: prefer Next.js server actions in `app/*`; optional `app/**/route.ts` for API routes; Firebase SDK on client for realtime.
+- Data: Firestore (persistent data), Realtime DB (presence/typing), Storage (images), FCM (notifications); secure with Firebase rules.
+- Import/style: use absolute imports `@/*`; prefer `type` over `interface`; keep files <250 LOC; small, focused components/hooks; colocate feature code.
+- React/Next patterns: server components by default; add `'use client'` for interactivity; use `loading.tsx` and `error.tsx` per route; Suspense where needed.
+- UI: Tailwind utilities first; compose with shadcn/ui; use `clsx` + `tailwind-merge` via `cn` helper from `lib/utils.ts`.
+- Error handling: show inline errors + toasts; add error boundaries; never log sensitive data; add retry/backoff for Firebase ops.
+- Performance/security: follow Cursor rules for caching, virtualization, auth guards, token verification, and cleaned-up listeners.
+- Package manager: use pnpm/pnpx only.
+- Cursor rules present (follow them):
+  - `.cursor/rules/project-structure.mdc` (always apply)
+  - `.cursor/rules/typescript-quality.mdc` (TS quality)
+  - `.cursor/rules/nextjs-patterns.mdc` (App Router)
+  - `.cursor/rules/ui-styling.mdc` (UI/UX)
+  - `.cursor/rules/feature-development.mdc` (MVP scope)
+  - `.cursor/rules/security-performance.mdc` (sec/perf)
+- Docs: see `docs/PRD.md`, `docs/general.md`, and `docs/features/*/*.spec.md` for acceptance criteria and specs.

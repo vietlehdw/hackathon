@@ -1,0 +1,38 @@
+---
+alwaysApply: true
+---
+
+# Project Structure & Architecture
+
+This is a modern real-time chat application built for a hackathon. The project follows a specific architecture and structure that must be maintained.
+
+## Architecture Overview
+- **Frontend**: Next.js 15 with App Router (React 19), shadcn/ui components, Tailwind CSS 4
+- **Backend**: Firebase (Auth, Firestore, Realtime Database, Storage, Cloud Functions, FCM)
+- **Package Manager**: Use `pnpm` and `pnpx` instead of npm/npx
+- **Hosting**: Next.js dev server locally, production hosting TBD
+
+## Project Structure
+- `app/`: Next.js App Router routes, layouts, pages, server actions
+- `lib/`: Shared utilities (Firebase client/server initializers, helpers)
+- `public/`: Static assets
+- `docs/`: Product and technical documentation (see [PRD.md](mdc:docs/PRD.md) and [general.md](mdc:docs/general.md))
+- `.vscode/`: Editor configuration
+
+## Key Files
+- Main configuration: [package.json](mdc:package.json), [tsconfig.json](mdc:tsconfig.json), [components.json](mdc:components.json)
+- Entry point: [app/layout.tsx](mdc:app/layout.tsx), [app/page.tsx](mdc:app/page.tsx)
+- Utilities: [lib/utils.ts](mdc:lib/utils.ts)
+
+## Naming Conventions
+- Use kebab-case for files/folders in docs (`docs/features/*`)
+- TypeScript throughout the project
+- Keep components small and colocate feature-specific UI under app/ routes or feature folders
+- Prefer `type` over `interface` for TypeScript definitions
+
+## File Organization Rules
+- Keep files under 250 lines of code
+- Separate mock data from source code
+- Eliminate redundant code
+- Colocate related functionality
+- Use absolute paths when possible (@/* imports configured)

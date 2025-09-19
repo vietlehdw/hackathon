@@ -1,0 +1,76 @@
+---
+description: Feature-specific development guidelines and MVP requirements
+---
+
+# Feature Development Guidelines
+
+## MVP Feature Scope
+Based on the [PRD](mdc:docs/PRD.md), implement these core features in order of priority:
+
+### 1. Authentication (Critical)
+- Email/password signup and login
+- Google SSO integration
+- Password reset flow
+- Session persistence and logout
+- Route protection for authenticated users
+
+### 2. User Profiles (Critical)
+- Profile creation and editing (name, username, photo, bio)
+- Profile viewing from chat interfaces
+- Avatar management with image uploads
+
+### 3. Direct Messaging (Critical)
+- 1-on-1 conversations between users
+- Real-time text and image messaging
+- Message history persistence
+- User search and conversation initiation
+
+### 4. Group Chat (High Priority)
+- Multi-participant chat rooms
+- Room creation, joining, and leaving
+- Member management and invitations
+- Group messaging with same features as DMs
+
+### 5. Real-time Presence (High Priority)
+- Online/away status indicators
+- Typing indicators within conversations
+- Real-time status updates
+
+### 6. Push Notifications (Medium Priority)
+- FCM integration for background notifications
+- In-app notification banners
+- Unread message badge counts
+- Notification preferences
+
+### 7. Admin Functionality (Low Priority)
+- Admin dashboard for user and room management
+- Content moderation tools
+- User removal capabilities
+
+## Development Approach
+- **Feature-First**: Implement complete vertical slices
+- **Real-time First**: Use Firebase real-time listeners throughout
+- **Mobile-First**: Design for mobile, enhance for desktop
+- **Error-Resilient**: Implement comprehensive error handling
+
+## Technical Specifications
+Each feature has detailed technical specs in `docs/features/*/`:
+- [Authentication](mdc:docs/features/authentication/authentication.spec.md)
+- [Direct Messaging](mdc:docs/features/direct-messaging/direct-messaging.spec.md)
+- User Profiles, Group Chat, Real-time Presence, Push Notifications, Admin Functionality
+
+## Acceptance Criteria
+Follow the specific acceptance criteria defined in the PRD:
+- Functional requirements (95% test case pass rate)
+- Performance targets (messages <2s, presence <5s)
+- Reliability goals (50+ concurrent users)
+- User experience standards (70% profile completion)
+
+## Development Workflow
+1. Read the feature specification thoroughly
+2. Implement data models and Firebase rules first
+3. Create UI components following design patterns
+4. Add real-time functionality with proper cleanup
+5. Implement error handling and loading states
+6. Test across different user scenarios
+7. Verify acceptance criteria before moving to next feature

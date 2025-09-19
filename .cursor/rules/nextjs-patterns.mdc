@@ -1,0 +1,55 @@
+---
+globs: app/**/*
+---
+
+# Next.js 15 App Router Patterns
+
+## App Router Structure
+- Use Next.js 15 App Router with React 19
+- Server components by default, client components when needed
+- Colocate page, layout, loading, and error files
+- Use route groups for organization: `(auth)`, `(chat)`, etc.
+
+## Development Commands
+- **Dev**: `pnpm dev --turbopack` (with Turbopack for faster builds)
+- **Build**: `pnpm build --turbopack`
+- **Start**: `pnpm start`
+
+## Component Patterns
+- Server components for data fetching and static content
+- Client components for interactivity (`'use client'` directive)
+- Use React 19 features: concurrent features, automatic batching, transitions
+- Implement proper loading states with `loading.tsx` files
+- Create error boundaries with `error.tsx` files
+
+## Route Protection
+- Implement authentication guards for protected routes
+- Redirect unauthenticated users to login
+- Use middleware for route-level protection when needed
+- Server actions for authenticated operations
+
+## Data Fetching
+- Use server components for initial data loading
+- Client-side Firebase listeners for real-time updates
+- Implement proper error handling and loading states
+- Use React Suspense boundaries appropriately
+
+## Performance Optimization
+- Use Next.js Image component for optimized images
+- Implement proper caching strategies
+- Use dynamic imports for code splitting
+- Optimize bundle size with tree shaking
+
+## Routing Conventions
+- `page.tsx`: Route pages
+- `layout.tsx`: Shared layouts
+- `loading.tsx`: Loading UI
+- `error.tsx`: Error boundaries
+- `not-found.tsx`: 404 pages
+- `route.ts`: API routes (if needed)
+
+## Server Actions
+- Use server actions for form handling and mutations
+- Implement proper validation and error handling
+- Keep server actions focused and single-purpose
+- Use proper TypeScript types for action parameters

@@ -1,0 +1,61 @@
+---
+description: UI/UX patterns and styling guidelines with shadcn/ui and Tailwind CSS
+---
+
+# UI/UX & Styling Guidelines
+
+## Design System
+- **Component Library**: shadcn/ui (see [components.json](mdc:components.json) for configuration)
+- **Styling**: Tailwind CSS 4 with custom configuration
+- **Icons**: Lucide React icons
+- **Animations**: tw-animate-css for enhanced animations
+
+## Component Architecture
+- Use shadcn/ui components as base building blocks
+- Customize components using Tailwind utilities and CSS variables
+- Create compound components for complex UI patterns
+- Implement proper accessibility (ARIA labels, keyboard navigation)
+
+## Styling Patterns
+- Use Tailwind utility classes for styling
+- Leverage CSS variables for theming (dark/light mode ready)
+- Use `clsx` and `tailwind-merge` for conditional classes
+- Implement responsive design with Tailwind breakpoints
+
+## Chat UI Specifications
+- **Message List**: Reverse chronological with auto-scroll to bottom
+- **Message Bubbles**: Different styles for sent/received messages
+- **Typing Indicators**: Animated dots with user avatars
+- **Presence Status**: Online/away indicators with colored dots
+- **Image Messages**: Thumbnails with full-screen preview on tap
+
+## Form Patterns
+- Use proper form validation with inline error messages
+- Implement loading states with disabled buttons and spinners
+- Show toast notifications for success/error feedback
+- Use proper focus management and accessibility
+
+## Layout Components
+- **Navigation**: Clean header with user profile and logout
+- **Sidebar**: Chat list with unread counts and search
+- **Main Content**: Chat interface with message composer
+- **Modals**: Profile editing, group creation, settings
+
+## Responsive Design
+- Mobile-first approach with progressive enhancement
+- Touch-friendly interface elements (44px minimum touch targets)
+- Proper spacing and typography scales
+- Optimized for both mobile and desktop experiences
+
+## Performance Considerations
+- Use proper image optimization with Next.js Image component
+- Implement virtualization for long message lists
+- Use CSS transforms for smooth animations
+- Minimize layout shifts with proper sizing
+
+## Accessibility Standards
+- Proper semantic HTML structure
+- ARIA labels and roles for interactive elements
+- Keyboard navigation support
+- Screen reader compatibility
+- High contrast mode support
