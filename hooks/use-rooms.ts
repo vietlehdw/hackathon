@@ -10,6 +10,7 @@ export function useRooms() {
   const { user } = useAuth()
   const [rooms, setRooms] = useState<AnyRoom[]>([])
   const [loading, setLoading] = useState(true)
+  const [lastReadAtByRoomId, setLastReadAtByRoomId] = useState<Record<string, any>>({})
 
   useEffect(() => {
     if (!user) return
@@ -17,6 +18,14 @@ export function useRooms() {
     const q = query(collection(db, 'roomMembers'), where('uid', '==', user.uid))
     const unsub = onSnapshot(q, async (snap) => {
       const memberDocs = snap.docs
+      // track lastReadAt per room
+      const lastReadMap: Record<string, any> = {}
+      for (const d of memberDocs) {
+        const data = d.data() as DocumentData
+        if (data.roomId) lastReadMap[data.roomId as string] = (data as any).lastReadAt ?? null
+      }
+      setLastReadAtByRoomId(lastReadMap)
+
       // 2) Subscribe to each room doc
       const unsubs: Array<() => void> = []
       const nextRooms: Record<string, AnyRoom> = {}
@@ -48,5 +57,5 @@ export function useRooms() {
     })
   }, [rooms])
 
-  return { rooms: sortedRooms, loading }
+  return { rooms: sortedRooms, lastReadAtByRoomId, loading }
 }

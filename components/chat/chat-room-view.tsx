@@ -44,7 +44,14 @@ export function ChatRoomView({ roomId }: { roomId: string }) {
   // Auto-scroll to bottom on new messages
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight })
-  }, [messages.length])
+    // Update lastReadAt on new messages
+    if (user && messages.length > 0) {
+      void (async () => {
+        const { markRoomRead } = await import('@/lib/chat')
+        await markRoomRead(roomId, user.uid)
+      })()
+    }
+  }, [messages.length, roomId, user?.uid])
 
   async function onInvite() {
     if (!inviteText.trim()) return

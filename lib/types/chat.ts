@@ -32,6 +32,7 @@ export type RoomMember = {
   uid: string
   role: 'owner' | 'member'
   joinedAt: TimestampLike
+  lastReadAt?: TimestampLike | null
 }
 
 export type Message = {

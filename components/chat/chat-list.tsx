@@ -4,17 +4,19 @@ import Link from 'next/link'
 import { useRooms } from '@/hooks/use-rooms'
 import type { AnyRoom } from '@/lib/types/chat'
 import { useAuth } from '@/hooks/use-auth'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { searchUsersByName } from '@/lib/users'
 import { createGroupRoom, createOrOpenDMRoom } from '@/lib/chat'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { usePathname } from 'next/navigation'
 
 import { usePresence } from '@/hooks/use-presence'
 import { useUsers } from '@/hooks/use-users'
 import { UserAvatar } from '@/components/user-avatar'
+import { NotificationPermissionBanner } from '@/components/notifications/permission-banner'
 
-function RoomPreview({ room, currentUid }: { room: AnyRoom; currentUid: string | undefined }) {
+function RoomPreview({ room, currentUid, lastReadAt, isActive }: { room: AnyRoom; currentUid: string | undefined; lastReadAt: any | null; isActive: boolean }) {
   const href = `/chat/${room.id}`
   const preview = room.lastMessageType === 'image' ? '[Image]' : (room.lastMessageText ?? '')
   let peerUid: string | null = null
@@ -27,6 +29,12 @@ function RoomPreview({ room, currentUid }: { room: AnyRoom; currentUid: string |
   const online = peerUid ? (presence[peerUid]?.state ?? 'offline') === 'online' : false
   const title = room.type === 'group' ? (room.name ?? 'Group') : (peerUid ? (usersMap[peerUid]?.displayName ?? 'Direct message') : 'Direct message')
   const user = peerUid ? usersMap[peerUid] : undefined
+  const lastMessageAtMs = (room.lastMessageAt as any)?.toMillis?.() ?? 0
+  const lastReadMs = (lastReadAt as any)?.toMillis?.() ?? 0
+  const lastSenderId = room.lastMessageSenderId ?? null
+  const isSelfLastMessage = currentUid ? lastSenderId === currentUid : false
+  const hasUnread = !isSelfLastMessage && lastMessageAtMs > lastReadMs
+  const showUnread = !isActive && hasUnread
   return (
     <Link href={href} className="block px-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
       <div className="font-medium text-sm flex items-center gap-2">
@@ -35,6 +43,7 @@ function RoomPreview({ room, currentUid }: { room: AnyRoom; currentUid: string |
         )}
         {title}
         {room.type === 'dm' && <span className={`inline-block w-2 h-2 rounded-full ${online ? 'bg-green-500' : 'bg-gray-400 opacity-70'}`} />}
+        {showUnread && <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-blue-600 text-white">1</span>}
       </div>
       <div className="text-xs text-neutral-500 truncate">{preview}</div>
     </Link>
@@ -118,8 +127,14 @@ function NewGroupModal({ open, onClose }: { open: boolean; onClose: () => void }
 type ChatListProps = { mode?: 'standalone' | 'sidebar' }
 
 export function ChatList({ mode = 'standalone' }: ChatListProps) {
-  const { rooms, loading } = useRooms()
+  const { rooms, lastReadAtByRoomId, loading } = useRooms()
   const { user } = useAuth()
+  const pathname = usePathname()
+  const activeRoomId = useMemo(() => {
+    if (!pathname) return null
+    const m = pathname.match(/^\/chat\/(.+)$/)
+    return m ? decodeURIComponent(m[1]) : null
+  }, [pathname])
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Array<{ uid: string; displayName: string; username?: string; photoURL?: string | null }>>([])
   const [searching, setSearching] = useState(false)
@@ -150,9 +165,10 @@ export function ChatList({ mode = 'standalone' }: ChatListProps) {
     <div className="w-full max-w-md border-r border-neutral-200 dark:border-neutral-800">
       <div className="p-3 flex gap-2">
         <Input placeholder="Search users to DM" value={query} onChange={(e) => setQuery(e.target.value)} />
-        <Button variant="outline" className='whitespace-nowrap' onClick={() => setNewGroupOpen(true)}>New Group</Button>
+        <Button className='whitespace-nowrap' onClick={() => setNewGroupOpen(true)}>New Group</Button>
       </div>
       {searching && <div className="px-3 text-xs text-neutral-500">Searching…</div>}
+      <NotificationPermissionBanner />
       {results.length > 0 && (
         <div className="px-3 py-2">
           <div className="text-xs text-neutral-500 mb-1">Start a DM</div>
@@ -172,7 +188,7 @@ export function ChatList({ mode = 'standalone' }: ChatListProps) {
       <div className="text-xs text-neutral-500 px-4 py-2">Your chats</div>
       {loading && <div className="px-4 py-2 text-xs text-neutral-500">Loading…</div>}
       <div>
-        {rooms.map((r) => <RoomPreview key={r.id} room={r} currentUid={user?.uid} />)}
+        {rooms.map((r) => <RoomPreview key={r.id} room={r} currentUid={user?.uid} lastReadAt={lastReadAtByRoomId[r.id] ?? null} isActive={activeRoomId === r.id} />)}
       </div>
       <NewGroupModal open={newGroupOpen} onClose={() => setNewGroupOpen(false)} />
     </div>

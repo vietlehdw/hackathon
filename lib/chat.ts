@@ -214,6 +214,11 @@ export async function getRoomMembers(roomId: string): Promise<RoomMember[]> {
   return snap.docs.map((d) => ({ ...(d.data() as any), id: d.id } as RoomMember))
 }
 
+export async function markRoomRead(roomId: string, uid: string): Promise<void> {
+  const memberId = `${roomId}_${uid}`
+  await updateDoc(doc(db, 'roomMembers', memberId), { lastReadAt: serverTimestamp() })
+}
+
 export async function getPeerUidForDM(roomId: string, currentUid: string): Promise<string | null> {
   // dm_<a>_<b>
   if (!roomId.startsWith('dm_')) return null

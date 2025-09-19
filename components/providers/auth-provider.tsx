@@ -132,6 +132,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     async logout() {
       const auth = getFirebaseAuth()
+      try {
+        const { deleteFcmTokenAndUnregister } = await import('@/lib/notifications')
+        await deleteFcmTokenAndUnregister(user?.uid ?? undefined)
+      } catch {}
       await signOut(auth)
       // user will be set to null by listener
     },
