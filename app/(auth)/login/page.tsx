@@ -21,7 +21,7 @@ type LoginValues = z.infer<typeof LoginSchema>
 function LoginInner() {
   const router = useRouter()
   const search = useSearchParams()
-  const next = search.get('next') || '/'
+  const next = search.get('next') || '/chat'
   const { user, loading, signInWithEmail, signInWithGoogle } = useAuth()
   const [error, setError] = useState<string | null>(null)
 

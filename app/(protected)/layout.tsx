@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/use-auth'
 
 import { useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import { PresenceProvider } from '@/components/providers/presence-provider'
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useRequireAuth()
@@ -35,6 +36,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
         <Button variant="outline" size="sm" onClick={() => void logout()}>Logout</Button>
       </header>
       <main className="flex-1">{children}</main>
+      <PresenceProvider />
     </div>
   )
 }
