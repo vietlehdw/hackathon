@@ -36,8 +36,11 @@ function RoomPreview({ room, currentUid, lastReadAt, isActive }: { room: AnyRoom
   const hasUnread = !isSelfLastMessage && lastMessageAtMs > lastReadMs
   const showUnread = !isActive && hasUnread
   return (
-    <Link href={href} className="block px-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
-      <div className="font-medium text-sm flex items-center gap-2">
+    <Link
+      href={href}
+      className={`block px-4 py-3 border-b border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900 ${isActive ? 'bg-neutral-100 dark:bg-neutral-900' : ''}`}
+    >
+      <div className={`text-sm flex items-center gap-2 ${isActive ? 'font-semibold' : 'font-medium'}`}>
         {peerUid && (
           <UserAvatar uid={peerUid} displayName={user?.displayName} username={user?.username} photoURL={user?.photoURL} size={20} clickable={false} />
         )}

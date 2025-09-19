@@ -16,36 +16,44 @@ export function useRooms() {
     if (!user) return
     // 1) Subscribe to membership list
     const q = query(collection(db, 'roomMembers'), where('uid', '==', user.uid))
+
+    // Track active room listeners so we can clean them up between membership updates
+    let roomUnsubs: Array<() => void> = []
+    const cleanupRoomUnsubs = () => {
+      roomUnsubs.forEach((fn) => fn())
+      roomUnsubs = []
+    }
+
     const unsub = onSnapshot(q, async (snap) => {
       const memberDocs = snap.docs
       // track lastReadAt per room
       const lastReadMap: Record<string, any> = {}
       for (const d of memberDocs) {
-        const data = d.data() as DocumentData
+        const data = d.data({ serverTimestamps: 'estimate' }) as DocumentData
         if (data.roomId) lastReadMap[data.roomId as string] = (data as any).lastReadAt ?? null
       }
       setLastReadAtByRoomId(lastReadMap)
 
       // 2) Subscribe to each room doc
-      const unsubs: Array<() => void> = []
+      cleanupRoomUnsubs()
       const nextRooms: Record<string, AnyRoom> = {}
       for (const d of memberDocs) {
-        const data = d.data() as DocumentData
+        const data = d.data({ serverTimestamps: 'estimate' }) as DocumentData
         const roomId = data.roomId as string
         const u = onSnapshot(doc(db, 'rooms', roomId), (roomSnap) => {
-          const rdata = { id: roomSnap.id, ...(roomSnap.data() as DocumentData) } as AnyRoom
+          const rdata = { id: roomSnap.id, ...(roomSnap.data({ serverTimestamps: 'estimate' }) as DocumentData) } as AnyRoom
           nextRooms[roomId] = rdata
           // Convert record to array
           setRooms(Object.values({ ...nextRooms }))
           setLoading(false)
         })
-        unsubs.push(u)
-      }
-      return () => {
-        unsubs.forEach((fn) => fn())
+        roomUnsubs.push(u)
       }
     })
-    return () => unsub()
+    return () => {
+      cleanupRoomUnsubs()
+      unsub()
+    }
   }, [user?.uid])
 
   // Sort rooms by lastMessageAt desc

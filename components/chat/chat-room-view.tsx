@@ -43,7 +43,11 @@ export function ChatRoomView({ roomId }: { roomId: string }) {
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight })
+    // Scroll to bottom when messages update or room changes
+    const el = listRef.current
+    if (el) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    }
     // Update lastReadAt on new messages
     if (user && messages.length > 0) {
       void (async () => {

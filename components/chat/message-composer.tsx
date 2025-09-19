@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/hooks/use-auth'
 import { sendImageMessage, sendTextMessage } from '@/lib/chat'
 import { uploadRoomImage } from '@/lib/upload'
 import { useTyping } from '@/hooks/use-typing'
+import { Send } from 'lucide-react'
 
 export function MessageComposer({ roomId }: { roomId: string }) {
   const { user } = useAuth()
@@ -14,6 +15,7 @@ export function MessageComposer({ roomId }: { roomId: string }) {
   const [sending, setSending] = useState(false)
   const [uploading, setUploading] = useState(false)
   const { setTyping, stopTypingNow } = useTyping(roomId)
+  const inputRef = useRef<HTMLInputElement | null>(null)
 
   async function onSend() {
     if (!user) return
@@ -24,6 +26,8 @@ export function MessageComposer({ roomId }: { roomId: string }) {
       await sendTextMessage(roomId, user.uid, t)
       setText('')
       stopTypingNow()
+      // Refocus input after sending
+      inputRef.current?.focus()
     } finally {
       setSending(false)
     }
@@ -50,6 +54,7 @@ export function MessageComposer({ roomId }: { roomId: string }) {
         {uploading ? 'Uploading…' : 'Image'}
       </label>
       <Input
+        ref={inputRef}
         value={text}
         onChange={(e) => { setText(e.target.value); setTyping(Boolean(e.target.value)) }}
         onKeyDown={(e) => {
@@ -64,7 +69,10 @@ export function MessageComposer({ roomId }: { roomId: string }) {
         className="flex-1"
         disabled={sending}
       />
-      <Button onClick={() => void onSend()} disabled={sending || text.trim().length === 0}>Send</Button>
+      <Button onClick={() => void onSend()} disabled={sending || text.trim().length === 0} className='flex gap-2'>
+        <Send className="w-4 h-4" />
+        <span>Send</span>
+      </Button>
     </div>
   )
 }
