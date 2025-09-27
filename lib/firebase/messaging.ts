@@ -11,13 +11,13 @@ export async function getFirebaseMessaging(): Promise<Messaging | null> {
   return messaging
 }
 
-export async function getFcmToken(): Promise<string | null> {
+export async function getFcmToken(serviceWorkerRegistration?: ServiceWorkerRegistration | null): Promise<string | null> {
   const m = await getFirebaseMessaging()
   if (!m) return null
   const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
   if (!vapidKey) return null
   try {
-    const token = await getToken(m, { vapidKey })
+    const token = await getToken(m, { vapidKey, serviceWorkerRegistration: serviceWorkerRegistration ?? undefined })
     return token ?? null
   } catch (e) {
     return null

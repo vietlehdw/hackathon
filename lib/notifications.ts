@@ -8,8 +8,11 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return null
   const swPath = process.env.NEXT_PUBLIC_PUSH_SW_PATH || '/firebase-messaging-sw.js'
   try {
-    const reg = await navigator.serviceWorker.register(swPath)
-    return reg
+    // Register (idempotent if already registered)
+    await navigator.serviceWorker.register(swPath)
+    // Wait until the SW is active/ready to receive push
+    const ready = await navigator.serviceWorker.ready
+    return ready
   } catch (e) {
     console.warn('Service worker registration failed', e)
     return null
@@ -33,7 +36,7 @@ export async function ensureFcmToken(uid: string): Promise<string | null> {
   // Get or create token
   let token = localStorage.getItem(TOKEN_STORAGE_KEY)
   if (!token) {
-    token = await getFcmToken()
+    token = await getFcmToken(swReg)
   }
   if (!token) return null
 

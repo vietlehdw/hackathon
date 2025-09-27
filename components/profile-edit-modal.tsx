@@ -21,6 +21,7 @@ export default function ProfileEditModal({ open, onClose }: Props) {
   const { user } = useAuth()
   const [displayName, setDisplayName] = useState('')
   const [username, setUsername] = useState('')
+  const [initialUsername, setInitialUsername] = useState('')
   const [photoURL, setPhotoURL] = useState<string | null>(null)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
@@ -39,10 +40,12 @@ export default function ProfileEditModal({ open, onClose }: Props) {
           const d = s.data() as any
           setDisplayName(d.displayName ?? user.displayName ?? '')
           setUsername(d.username ?? '')
+          setInitialUsername(d.username ?? '')
           setPhotoURL(d.photoURL ?? user.photoURL ?? null)
         } else {
           setDisplayName(user.displayName ?? '')
           setUsername('')
+          setInitialUsername('')
           setPhotoURL(user.photoURL ?? null)
         }
         setAvatarFile(null)
@@ -59,6 +62,8 @@ export default function ProfileEditModal({ open, onClose }: Props) {
     if (!open) return
     if (!username) { setAvailability('idle'); return }
     if (!usernameRegex.test(username)) { setAvailability('invalid'); return }
+    // If username hasn't changed from the current one, skip remote validation
+    if (username === initialUsername) { setAvailability('available'); return }
     let canceled = false
     setAvailability('checking')
     const t = setTimeout(async () => {
@@ -71,7 +76,7 @@ export default function ProfileEditModal({ open, onClose }: Props) {
       }
     }, 300)
     return () => { canceled = true; clearTimeout(t) }
-  }, [open, username])
+  }, [open, username, initialUsername])
 
   const previewURL = useMemo(() => {
     if (avatarFile) return URL.createObjectURL(avatarFile)
@@ -171,13 +176,14 @@ export default function ProfileEditModal({ open, onClose }: Props) {
               {availability === 'invalid' && <span className="text-red-600">Invalid format</span>}
             </div>
           </div>
-          <div className="space-y-1">
-            <Label htmlFor="avatar">Avatar</Label>
-            <input id="avatar" type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)} />
+          <div className="space-y-1 flex gap-2">
             {previewURL && (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={previewURL} alt="Preview" className="mt-2 w-16 h-16 rounded-full object-cover" />
             )}
+            <div className='flex flex-col gap-2'><Label htmlFor="avatar">Avatar</Label>
+            <input id="avatar" type="file" className='file:mr-4 file:rounded-full file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-600 dark:file:text-blue-100 dark:hover:file:bg-blue-500' accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)} /></div>
+            
           </div>
           {error && <div className="text-sm text-red-600">{error}</div>}
           <div className="flex justify-end gap-2 pt-2">

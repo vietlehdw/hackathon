@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
-This is a real-time chat application built for a hackathon using Next.js 15 with App Router, React 19, Firebase, and shadcn/ui. The app supports authentication, direct/group messaging, real-time presence, and push notifications.
+This is a real-time chat application built for a hackathon using Next.js 15 with App Router, React 19, Firebase, and shadcn/ui. The app supports authentication, direct/group messaging, real-time presence, and push notifications. See docs/PRD.md for detailed product requirements.
 
 ## Development Commands
 
@@ -18,89 +18,73 @@ pnpm build --turbopack         # Build with Turbopack
 pnpm start                     # Start production server
 
 # Type checking
-pnpm tsc --noEmit             # TypeScript type checking
+pnpm tsc --noEmit              # TypeScript type checking
 
-# Testing (when added)
-pnpm vitest                   # Run all tests
-pnpm vitest -t "test name"    # Run specific test
+# Testing (setup pending as of current package.json)
+# pnpm vitest                   # Run all tests (add Vitest to devDependencies when implementing)
+# pnpm vitest -t \"test name\"    # Run specific test
 ```
 
 ## Architecture & Stack
 
 **Frontend:**
-- Next.js 15 with App Router (React 19)
-- Server components by default - add `'use client'` for interactivity
-- Tailwind CSS 4 with shadcn/ui components
-- Lucide React icons
+- Next.js 15 with App Router (React 19): Server components default, `'use client'` for interactivity
+- Tailwind CSS 4 with shadcn/ui components and Lucide React icons
+- Absolute imports via `@/*` alias (tsconfig.json)
 
 **Backend:**
-- Firebase Auth (email/password + SSO)
-- Firestore (persistent chat data)
-- Realtime Database (presence & typing indicators)
-- Cloud Storage (image messages)
-- Cloud Functions (server-side logic)
-- FCM (push notifications)
+- Firebase Auth (email/password + Google SSO)
+- Firestore for persistent chat data
+- Realtime Database for presence & typing indicators
+- Cloud Storage for image messages
+- Cloud Functions for server-side logic
+- FCM for push notifications
 
 **Project Structure:**
-- `app/` - Next.js routes, layouts, pages, server actions
+- `app/` - Next.js routes, layouts, pages, server actions; use route groups like `(auth)`, `(chat)`
 - `lib/` - Utilities, Firebase client/server config
-- `docs/` - PRD and feature specifications
-- `.cursor/rules/` - Development guidelines
+- `components/` - Reusable UI (shadcn/ui in `@/components/ui`)
+- `docs/` - PRD and feature specs (kebab-case for features)
+- `.cursor/rules/` - Guidelines: project-structure.mdc (architecture), nextjs-patterns.mdc (App Router), ui-styling.mdc (shadcn/Tailwind), firebase-integration.mdc
 
 ## Key Configuration
 
-**Imports:** Use absolute paths with `@/*` alias (configured in tsconfig.json)
-
-**TypeScript:** Strict mode enabled, prefer `type` over `interface`
+**TypeScript:** Strict mode, prefer `type` over `interface`
 
 **Styling:**
-- Tailwind utilities first
-- Use `cn()` helper from `@/lib/utils` for conditional classes
-- shadcn/ui components in `@/components/ui`
-
-**File Organization:**
-- Keep files under 250 LOC
-- Colocate feature-specific code
-- Use kebab-case for files in docs/
+- Tailwind utilities primary, `cn()` from `@/lib/utils` for conditional classes
+- Mobile-first responsive design, WCAG accessibility (ARIA, keyboard nav)
+- Keep files <250 LOC, colocate feature code
 
 ## Firebase Integration Patterns
 
 **Client-side:**
-- Firebase SDK for real-time features (presence, typing)
-- Authentication state management
-- Firestore subscriptions for chat messages
+- SDK for real-time (presence, typing), auth state, Firestore subscriptions
 
 **Server-side:**
-- Next.js server actions for mutations
-- Firebase Admin SDK for secure operations
-- API routes only when server actions aren't suitable
+- Server actions for mutations, Admin SDK for secure ops
+- API routes only if server actions insufficient
 
 ## Feature Development Guidelines
 
 **Chat Features:**
-- Direct messaging (1-to-1)
-- Group chat rooms
-- Text and image messages
-- Real-time presence indicators
-- Typing notifications
-- Push notifications
+- Direct (1-to-1) and group messaging
+- Text/image messages with real-time updates
+- Presence indicators, typing notifications
+- Push notifications for new messages
 
 **Authentication:**
-- Email/password + Google SSO
-- Protected routes and session handling
-- User profiles with photos and bios
+- Email/password + Google SSO, protected routes
+- User profiles (name, username, photo, bio) editable/viewable
 
 **Admin Features:**
-- User and room management
-- Content moderation capabilities
+- Manage users/rooms, moderate content
 
 ## Important Notes
 
-- Server components by default - use `'use client'` sparingly
-- Implement proper error boundaries and loading states
-- Follow Firebase security rules for data protection
-- Use `loading.tsx` and `error.tsx` for route-level UI states
-- Handle real-time listeners cleanup properly
-- Never log sensitive data (tokens, passwords)
+- Server components default; implement loading/error.tsx for routes
+- Firebase security rules essential; cleanup listeners
+- No sensitive data logging
+- Optimize: Next.js Image, virtualization for messages, Suspense boundaries
 
-See `docs/PRD.md` for detailed product requirements and `docs/features/*/` for specific feature specifications.
+See `docs/PRD.md` for requirements and `docs/features/*/` for specs.
